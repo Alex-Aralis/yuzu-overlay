@@ -1,7 +1,12 @@
 # Yuzu Ebuild Notes
+This is a gentoo overlay that currently provides the [Yuzu Emulator](https://yuzu-emu.org/) and some of its dependencies.
 
 ## How to use
+To install this overlay check it out -> https://wiki.gentoo.org/wiki/Project:Overlays/Overlays_guide
+
 Most of the Yuzu flags are not tested because it would take forever and the feature creep is already bad enough. Default flags should work without issue (as long as your system is x86 or amd64). All other configurations are use at your own risk.
+
+This yuzu is stable masked (as it is very very unstable). If this statement confuses you read all about it -> https://wiki.gentoo.org/wiki/KEYWORDS
 
 ## Bug-like things:
 - httplib AND libressl are still required even when ENABLE_WEB_SERVICE=OFF. I've exposed the webservice use flag but disabling it will cause the compilation to fail.
