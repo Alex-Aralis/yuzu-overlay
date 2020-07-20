@@ -9,8 +9,8 @@ SRC_URI="https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-
 
 LICENSE="GPLv2"
 SLOT="0"
-KEYWORDS="amd64 ~amd64 x86 ~x86"
-IUSE="qt_translation bundled_qt generic abi_x86_32 abi_x86_64 +sdl2 +qt_web_engine +qt +boxcat +webservice docs discord +cubeb vulkan"
+KEYWORDS="~amd64 ~x86"
+IUSE="qt_translation bundled_qt generic abi_x86_32 abi_x86_64 +sdl2 +qt_web_engine +qt +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="!qt? ( !bundled_qt ( !qt_web_engine  !qt_translation ) )"
 DEPEND=""
 
@@ -21,11 +21,9 @@ RDEPEND="
 		qt_web_engine? ( >=dev-qt/qtwebengine-5.9:5[widgets] )
 	)
 	sdl2? ( media-libs/libsdl2 )
-	webservice? ( >=dev-libs/libressl-2.7.2 )
-	abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91[-operators] ) )
-	abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91[-operators] ) )
+	abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
+	abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 	>=media-libs/opus-1.3.1
-	>=net-libs/mbedtls-2.12.0
 	>=app-arch/lz4-1.8
 	>=dev-cpp/catch-2.11
 	>=dev-cpp/nlohmann_json-3.7
@@ -52,24 +50,17 @@ if [[ ${PV} == "9999" ]]; then
 	SRC_URI=""
 fi
 
-PATCHES=(
-	"${FILESDIR}/cmake.patch"
-)
-
 src_prepare() {
-	echo $(pwd)
+	eapply "${FILESDIR}/cmake.patch"
+
 	pushd "${S}/externals/unicorn"
-	emake clean
+		emake clean
 	popd
 
 	cmake_src_prepare
-
-	pushd "${S}/externals"
-	popd
 }
 
 src_configure() {
-	elog $(usex qt)
 	local mycmakeargs=(
 		-DUSE_DISCORD_PRESENCE=$(usex discord ON OFF)
 		-DENABLE_QT=$(usex qt ON OFF)
@@ -83,5 +74,5 @@ src_configure() {
 		-DYUZU_USE_BUNDLED_QT=$(usex bundled_qt ON OFF)
 	)
 
-	CMAKE_SYSTEM_PREFIX_PATH=/usr cmake_src_configure
+	cmake_src_configure
 }
