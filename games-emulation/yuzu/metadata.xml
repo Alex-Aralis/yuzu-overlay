@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>alex.aralis@gmail.com</email>
+		<name>Alex Aralis</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">yuzu-emu/yuzu-mainline</remote-id>
+	</upstream>
+
+	<use>
+		<flag name="docs">Generate and install the yuzu docs. (currently unimplemented)</flag>
+		<flag name="qt">Use the qt fronted.</flag>
+		<flag name="bundled_qt">Compile with the bundled qt source instead of linking to system qt.</flag>
+		<flag name="qt_translation">Enable qt translations in the fronted.</flag>
+		<flag name="qt_web_engine">Enable qtwebengine.</flag>
+		<flag name="boxcat">Enable boxcat backend support.</flag>
+		<flag name="webservice">Enable a webservice that tracks usage data. (Compilation fails if false)</flag>
+		<flag name="vulkan">Include Vulkan rendering engine.</flag>
+		<flag name="generic">Compile for generic target.</flag>
+		<flag name="sdl2">Use system SDL2. (Required)</flag>
+		<flag name="cubeb">Enable cubeb audio service.</flag>
+		<flag name="discord">Include discord-rpc and allow discord presence detection.</flag>
+	</use>
+</pkgmetadata>

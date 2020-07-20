@@ -7,10 +7,10 @@ DESCRIPTION="A Nintendo Switch emulator"
 HOMEPAGE="https://yuzu-emu.org/"
 SRC_URI="https://github.com/yuzu-emu/yuzu-mainline/releases/download/mainline-0-317/yuzu-linux-20200716-67db767dc.tar.xz"
 
-LICENSE="GPLv2"
+LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="qt_translation bundled_qt generic abi_x86_32 abi_x86_64 +sdl2 +qt_web_engine +qt +boxcat +webservice discord +cubeb vulkan"
+IUSE="qt_translation docs bundled_qt generic abi_x86_32 abi_x86_64 +sdl2 +qt_web_engine +qt +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="!qt? ( !bundled_qt ( !qt_web_engine  !qt_translation ) )"
 DEPEND=""
 
@@ -23,6 +23,7 @@ RDEPEND="
 	sdl2? ( media-libs/libsdl2 )
 	abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 	abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
+	docs? ( app-doc/doxygen[dot] )
 	>=media-libs/opus-1.3.1
 	>=app-arch/lz4-1.8
 	>=dev-cpp/catch-2.11
