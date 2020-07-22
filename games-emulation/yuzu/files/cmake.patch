@@ -84,7 +84,7 @@ index 656096c9f..a17aef8b8 100644
  
  if(UNIX AND NOT APPLE)
 -    install(TARGETS yuzu RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
-+    install(TARGETS yuzu 
++    install(TARGETS yuzu
 +	    RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
 +	    COMPONENT yuzu)
  endif()
@@ -99,7 +99,7 @@ index a15719a0f..a42b43c44 100644
  
  if(UNIX AND NOT APPLE)
 -    install(TARGETS yuzu-cmd RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
-+    install(TARGETS yuzu-cmd 
++    install(TARGETS yuzu-cmd
 +	    RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
 +	    COMPONENT yuzu-cmd)
  endif()
@@ -114,7 +114,7 @@ index 06c2ee011..c2e89b50e 100644
  
  if(UNIX AND NOT APPLE)
 -    install(TARGETS yuzu-tester RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
-+    install(TARGETS yuzu-tester 
++    install(TARGETS yuzu-tester
 +	    RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
 +	    COMPONENT yuzu-tester)
  endif()
