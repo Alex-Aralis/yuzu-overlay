@@ -10,11 +10,14 @@
 	</upstream>
 
 	<use>
-		<flag name="docs">Generate and install the yuzu docs. (currently unimplemented)</flag>
-		<flag name="qt">Use the qt fronted.</flag>
-		<flag name="bundled_qt">Compile with the bundled qt source instead of linking to system qt.</flag>
-		<flag name="qt_translation">Enable qt translations in the fronted.</flag>
-		<flag name="qt_web_engine">Enable qtwebengine.</flag>
+		<flag name="gui">Build the yuzu gui.</flag>
+		<flag name="cli">Build the yuzu cli.</flag>
+		<flag name="test">Build the yuzu testing executables and run tests if FEATURES=test.</flag>
+		<flag name="desktop">Install the freedesktop.org desktop metadata files.</flag>
+		<flag name="qt5">Use the qt fronted.</flag>
+		<flag name="bundled-qt5">Compile with the bundled qt source instead of linking to system qt.</flag>
+		<flag name="qt-translations">Enable qt translations in the fronted.</flag>
+		<flag name="qt-webengine">Enable qtwebengine.</flag>
 		<flag name="boxcat">Enable boxcat backend support.</flag>
 		<flag name="webservice">Enable a webservice that tracks usage data. (Compilation fails if false)</flag>
 		<flag name="vulkan">Include Vulkan rendering engine.</flag>
