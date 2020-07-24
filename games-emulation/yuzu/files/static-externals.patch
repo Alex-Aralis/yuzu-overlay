@@ -1,0 +1,25 @@
+From 914509b64624d84da5c88ca9b3ac73fbb41b5100 Mon Sep 17 00:00:00 2001
+From: Alex Aralis <alex.aralis@gmail.com>
+Date: Fri, 24 Jul 2020 11:45:37 -0500
+Subject: [PATCH] force externals to be static
+
+---
+ externals/CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/externals/CMakeLists.txt b/externals/CMakeLists.txt
+index 6936e89d3..2f5c07902 100644
+--- a/externals/CMakeLists.txt
++++ b/externals/CMakeLists.txt
+@@ -4,6 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
+ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/externals/find-modules")
+ include(DownloadExternals)
+ 
++set(BUILD_SHARED_LIBS "OFF")
++
+ # xbyak
+ if (ARCHITECTURE_x86 OR ARCHITECTURE_x86_64)
+     add_library(xbyak INTERFACE)
+-- 
+2.27.0
+

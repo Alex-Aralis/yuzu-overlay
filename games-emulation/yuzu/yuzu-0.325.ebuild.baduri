@@ -5,10 +5,12 @@ EAPI=7
 
 DESCRIPTION="A Nintendo Switch emulator"
 HOMEPAGE="https://yuzu-emu.org/"
+# This URI can't be built from because it does not come bundled with its submodules
+SRC_URI="https://github.com/yuzu-emu/yuzu-mainline/archive/mainline-$(ver_rs 1- '-').tar.gz -> yuzu-${PV}.tar.gz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="system-xbyak system-opus system-qt5 +gui +desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
+IUSE="+system-xbyak +system-opus +system-qt5 +gui +desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine +qt5 +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
 	!gui? ( !desktop !qt5 )
@@ -16,6 +18,7 @@ REQUIRED_USE="
 "
 RESTRICT="
 	!test? ( test )
+	mirror
 "
 
 DEPEND=""
@@ -45,16 +48,24 @@ RDEPEND="
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit git-r3 xdg cmake python-single-r1
+inherit xdg cmake python-single-r1
 
-EGIT_REPO_URI="https://github.com/yuzu-emu/yuzu-mainline.git"
-EGIT_SUBMODULES=( '*' )
+YUZU_VARIANT=${PN##*-}
 
 if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="https://github.com/yuzu-emu/yuzu-mainline.git"
 	EGIT_BRANCH="master"
-else
-	EGIT_COMMIT="mainline-$(ver_rs 1- '-')"
+	EGIT_SUBMODULES=( '*' )
 fi
+
+src_unpack() {
+	default
+
+	mv yuzu-mainline-mainline-$(ver_rs 1- '-') yuzu-${PV}
+	ls
+	pwd
+}
 
 src_prepare() {
 	eapply "${FILESDIR}"/{fix-cmake,static-externals}.patch
@@ -113,6 +124,32 @@ src_install() {
 	use test && $install_component yuzu-tester
 
 	popd > /dev/null || die
+
+	# Rename files if varaint.
+	if [[ -n $YUZU_VARIANT ]]; then
+		for f in $(find ${D} -type f); do
+			local file_name=${f##*/}
+			local file_path=${f%/*}
+			local file_base=${file_name%.*}
+			local file_ext=${file_name##*.}
+			local variant_suffix=${YUZU_VARIANT:+-}${YUZU_VARIANT}
+
+			# Special case for dot files
+			if [[ $file_name =~ ^\.[^\.]*$ ]]; then
+				local destination="${file_path}/${file_name}${variant_suffix}"
+
+			# If has ext
+			elif [[ $file_name =~ \. ]]; then
+				local destination="${file_path}/${file_base}${variant_suffix}.${file_ext}"
+
+			# Not dot, no extension
+			else
+				local destination="${file_path}/${file_name}${variant_suffix}"
+			fi
+
+			mv "$f" "$destination"
+		done
+	fi
 
 	# Try to install docs
 	pushd "${S}" > /dev/null || die

@@ -1,0 +1,25 @@
+From a58265c241d67e672605cfdb4274631bf45be893 Mon Sep 17 00:00:00 2001
+From: Alex Aralis <alex.aralis@gmail.com>
+Date: Fri, 24 Jul 2020 17:28:16 -0500
+Subject: [PATCH] update desktop files
+
+---
+ dist/yuzu.desktop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dist/yuzu.desktop b/dist/yuzu.desktop
+index 105080c73..c614a4c08 100644
+--- a/dist/yuzu.desktop
++++ b/dist/yuzu.desktop
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ Version=1.0
+ Type=Application
+-Name=yuzu
++Name=Yuzu
+ GenericName=Switch Emulator
+ Comment=Nintendo Switch video game console emulator
+ Icon=yuzu
+-- 
+2.27.0
+

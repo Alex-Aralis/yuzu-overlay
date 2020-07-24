@@ -6,19 +6,22 @@
 		<name>Alex Aralis</name>
 	</maintainer>
 	<upstream>
-		<remote-id type="github">yuzu-emu/yuzu-mainline</remote-id>
+		<remote-id type="github">yuzu-emu/yuzu</remote-id>
 	</upstream>
+
 	<use>
+		<flag name="early-access">Build with early access and mainline patches. Needed to get most games to work with dev. Requires GITHUB_TOKEN to be set in make.conf to fetch PRs from github with hub. https://hub.github.com/hub.1.html</flag>
+		<flag name="mainline">Build with mainline patches. Needed to get most games to work with dev. Requires GITHUB_TOKEN to be set in make.conf to fetch PRs from github with hub. https://hub.github.com/hub.1.html</flag>
 		<flag name="gui">Build the yuzu gui.</flag>
 		<flag name="cli">Build the yuzu cli.</flag>
 		<flag name="test">Build the yuzu testing executables and run tests if FEATURES=test.</flag>
 		<flag name="desktop">Install the freedesktop.org desktop metadata files.</flag>
 		<flag name="qt5">Use the qt fronted.</flag>
+		<flag name="qt-translations">Enable qt translations in the fronted.</flag>
+		<flag name="qt-webengine">Enable qtwebengine.</flag>
 		<flag name="system-qt5">Use system qt5 instead of bundled version.</flag>
 		<flag name="system-opus">Use system opus instead of bundled version.</flag>
 		<flag name="system-xbyak">Use system xbyak instead of bundled version.</flag>
-		<flag name="qt-translations">Enable qt translations in the fronted.</flag>
-		<flag name="qt-webengine">Enable qtwebengine.</flag>
 		<flag name="boxcat">Enable boxcat backend support.</flag>
 		<flag name="webservice">Enable a webservice that tracks usage data. (Compilation fails if false)</flag>
 		<flag name="vulkan">Include Vulkan rendering engine.</flag>

@@ -5,33 +5,34 @@ EAPI=7
 
 DESCRIPTION="A Nintendo Switch emulator"
 HOMEPAGE="https://yuzu-emu.org/"
-SRC_URI=""
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+gui +desktop cli test qt-translations bundled-qt5 generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine +qt5 +boxcat +webservice discord +cubeb vulkan"
+SRC_URI=""
+IUSE="system-xbyak system-opus system-qt5 +gui +desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="
-	!qt5? ( !bundled-qt5 ( !qt-webengine  !qt-translations ) )
-	!gui? ( !desktop !qt5 !bundled-qt5 )
+	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
+	!gui? ( !desktop !qt5 )
 	|| ( gui cli test )
 "
 RESTRICT="
-	fetch
 	!test? ( test )
 "
 
 DEPEND=""
 BDEPEND=""
 RDEPEND="
-	!bundled-qt5? (
+	system-qt5? (
 		qt5? ( >=dev-qt/qtwidgets-5.9:5 )
 		qt-translations? ( >=dev-qt/qttranslations-5.9:5 )
 		qt-webengine? ( >=dev-qt/qtwebengine-5.9:5[widgets] )
 	)
+	system-xbyak? (
+		abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
+		abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
+	)
+	system-opus? ( >=media-libs/opus-1.3.1 )
 	sdl2? ( media-libs/libsdl2 )
-	abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
-	abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
-	>=media-libs/opus-1.3.1
 	>=app-arch/lz4-1.8
 	>=dev-cpp/catch-2.11
 	>=dev-cpp/nlohmann_json-3.7
@@ -45,9 +46,10 @@ RDEPEND="
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit xdg cmake python-single-r1 git-r3
+inherit git-r3 xdg cmake python-single-r1
 
 EGIT_REPO_URI="https://github.com/yuzu-emu/yuzu-mainline.git"
+EGIT_SUBMODULES=( '*' )
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_BRANCH="master"
@@ -56,11 +58,19 @@ else
 fi
 
 src_prepare() {
-	eapply "${FILESDIR}/cmake.patch"
+	eapply "${FILESDIR}"/{fix-cmake,static-externals}.patch
 
-	pushd "${S}/externals/unicorn"
-		emake clean
-	popd
+	if use system-xbyak; then
+		eapply "${FILESDIR}"/unbundle-xbyak.patch
+	fi
+
+	if use system-opus; then
+		eapply "${FILESDIR}"/unbundle-opus.patch
+	fi
+
+	if use desktop; then
+		eapply "${FILESDIR}"/mainline-metadata.patch
+	fi
 
 	cmake_src_prepare
 	xdg_src_prepare
@@ -77,7 +87,7 @@ src_configure() {
 		-DYUZU_ENABLE_BOXCAT=$(usex boxcat ON OFF)
 		-DYUZU_USE_BUNDLED_UNICORN=ON
 		-DENABLE_QT=$(usex qt5 ON OFF)
-		-DYUZU_USE_BUNDLED_QT=$(usex bundled-qt5 ON OFF)
+		-DYUZU_USE_BUNDLED_QT=$(usex !system-qt5 ON OFF)
 		-DYUZU_USE_QT_WEB_ENGINE=$(usex qt-webengine ON OFF)
 		-DENABLE_QT_TRANSLATION=$(usex qt-translations ON OFF)
 	)
@@ -95,7 +105,7 @@ src_install() {
 	_cmake_check_build_dir
 	pushd "${BUILD_DIR}" > /dev/null || die
 
-	install_component="$CMAKE_BINARY --install . --component "
+	local install_component="$CMAKE_BINARY --install . --component "
 
 	# Do component installs
 	use gui && $install_component yuzu
@@ -109,6 +119,4 @@ src_install() {
 	pushd "${S}" > /dev/null || die
 	einstalldocs
 	popd > /dev/null || die
-
-	unset install_component
 }

@@ -1,0 +1,44 @@
+diff --git a/dist/yuzu.desktop b/dist/yuzu.desktop
+index 105080c73..6ece81cb5 100644
+--- a/dist/yuzu.desktop
++++ b/dist/yuzu.desktop
+@@ -1,12 +1,12 @@
+ [Desktop Entry]
+ Version=1.0
+ Type=Application
+-Name=yuzu
++Name=Yuzu Dev
+ GenericName=Switch Emulator
+ Comment=Nintendo Switch video game console emulator
+-Icon=yuzu
+-TryExec=yuzu
+-Exec=yuzu %f
++Icon=yuzu-dev
++TryExec=yuzu-dev
++Exec=yuzu-dev %f
+ Categories=Game;Emulator;Qt;
+ MimeType=application/x-nx-nro;application/x-nx-nso;
+ Keywords=Switch;Nintendo;
+\ No newline at end of file
+diff --git a/dist/yuzu.xml b/dist/yuzu.xml
+index f6e408321..792f4450d 100644
+--- a/dist/yuzu.xml
++++ b/dist/yuzu.xml
+@@ -3,7 +3,7 @@
+     <mime-type type="application/x-nx-nro">
+         <comment>Nintendo Switch homebrew executable</comment>
+         <acronym>NRO</acronym>
+-        <icon name="yuzu"/>
++        <icon name="yuzu-dev"/>
+         <glob pattern="*.nro"/>
+         <magic><match value="NRO" type="string" offset="16"/></magic>
+     </mime-type>
+@@ -11,7 +11,7 @@
+     <mime-type type="application/x-nx-nso">
+         <comment>Nintendo Switch homebrew executable</comment>
+         <acronym>NSO</acronym>
+-        <icon name="yuzu"/>
++        <icon name="yuzu-dev"/>
+         <glob pattern="*.nso"/>
+         <magic><match value="NSO" type="string" offset="0"/></magic>
+     </mime-type>

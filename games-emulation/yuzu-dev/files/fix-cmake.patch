@@ -1,0 +1,94 @@
+From 285e5a352cf994f7d871f1d6487a627c2775efeb Mon Sep 17 00:00:00 2001
+From: Alex Aralis <alex.aralis@gmail.com>
+Date: Thu, 23 Jul 2020 19:38:38 -0500
+Subject: [PATCH] gentoo cmake prep
+
+---
+ CMakeLists.txt                 | 9 ++++++---
+ src/common/CMakeLists.txt      | 2 +-
+ src/yuzu/CMakeLists.txt        | 4 +++-
+ src/yuzu_cmd/CMakeLists.txt    | 4 +++-
+ src/yuzu_tester/CMakeLists.txt | 4 +++-
+ 5 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7a49318aa..1f8e32fbd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -549,9 +549,12 @@ endif()
+ # http://standards.freedesktop.org/shared-mime-info-spec/shared-mime-info-spec-latest.html
+ if(ENABLE_QT AND UNIX AND NOT APPLE)
+     install(FILES "${PROJECT_SOURCE_DIR}/dist/yuzu.desktop"
+-            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications")
++            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
++            COMPONENT "desktop")
+     install(FILES "${PROJECT_SOURCE_DIR}/dist/yuzu.svg"
+-            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps")
++            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
++            COMPONENT "desktop")
+     install(FILES "${PROJECT_SOURCE_DIR}/dist/yuzu.xml"
+-            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages")
++            DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
++            COMPONENT "desktop")
+ endif()
+diff --git a/src/common/CMakeLists.txt b/src/common/CMakeLists.txt
+index d120c8d3d..533b1a6e4 100644
+--- a/src/common/CMakeLists.txt
++++ b/src/common/CMakeLists.txt
+@@ -189,7 +189,7 @@ if(ARCHITECTURE_x86_64)
+ endif()
+ 
+ create_target_directory_groups(common)
+-find_package(Boost 1.71 COMPONENTS context headers REQUIRED)
++find_package(Boost 1.71 COMPONENTS context REQUIRED)
+ 
+ target_link_libraries(common PUBLIC ${Boost_LIBRARIES} fmt::fmt microprofile)
+ target_link_libraries(common PRIVATE lz4::lz4 zstd::zstd xbyak)
+diff --git a/src/yuzu/CMakeLists.txt b/src/yuzu/CMakeLists.txt
+index 656096c9f..48f423d67 100644
+--- a/src/yuzu/CMakeLists.txt
++++ b/src/yuzu/CMakeLists.txt
+@@ -242,7 +242,9 @@ if (YUZU_ENABLE_BOXCAT)
+ endif ()
+ 
+ if(UNIX AND NOT APPLE)
+-    install(TARGETS yuzu RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
++    install(TARGETS yuzu 
++            RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
++            COMPONENT yuzu)
+ endif()
+ 
+ if (MSVC)
+diff --git a/src/yuzu_cmd/CMakeLists.txt b/src/yuzu_cmd/CMakeLists.txt
+index a15719a0f..abdc4f48c 100644
+--- a/src/yuzu_cmd/CMakeLists.txt
++++ b/src/yuzu_cmd/CMakeLists.txt
+@@ -34,7 +34,9 @@ endif()
+ target_link_libraries(yuzu-cmd PRIVATE ${PLATFORM_LIBRARIES} SDL2 Threads::Threads)
+ 
+ if(UNIX AND NOT APPLE)
+-    install(TARGETS yuzu-cmd RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
++    install(TARGETS yuzu-cmd 
++            RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
++            COMPONENT yuzu-cmd)
+ endif()
+ 
+ if (MSVC)
+diff --git a/src/yuzu_tester/CMakeLists.txt b/src/yuzu_tester/CMakeLists.txt
+index 06c2ee011..ab38c905d 100644
+--- a/src/yuzu_tester/CMakeLists.txt
++++ b/src/yuzu_tester/CMakeLists.txt
+@@ -23,7 +23,9 @@ endif()
+ target_link_libraries(yuzu-tester PRIVATE ${PLATFORM_LIBRARIES} SDL2 Threads::Threads)
+ 
+ if(UNIX AND NOT APPLE)
+-    install(TARGETS yuzu-tester RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
++    install(TARGETS yuzu-tester 
++            RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
++            COMPONENT yuzu-tester)
+ endif()
+ 
+ if (MSVC)
+-- 
+2.27.0
+

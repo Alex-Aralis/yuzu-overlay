@@ -49,7 +49,7 @@ index d1dcc403b..737556c73 100644
  if (ARCHITECTURE_x86 OR ARCHITECTURE_x86_64)
      add_library(xbyak INTERFACE)
 -    target_include_directories(xbyak SYSTEM INTERFACE ./xbyak/xbyak)
-+    target_include_directories(xbyak SYSTEM INTERFACE /usr/include/xbyak)
++    target_include_directories(xbyak SYSTEM INTERFACE ./xbyak/xbyak)
      target_compile_definitions(xbyak INTERFACE XBYAK_NO_OP_NAMES)
  endif()
  
@@ -57,11 +57,10 @@ index d1dcc403b..737556c73 100644
  endif()
  
  # Opus
--add_subdirectory(opus)
-+#add_subdirectory(opus)
-+add_library(opus INTERFACE)
-+target_include_directories(opus SYSTEM INTERFACE /usr/include/opus)
-+target_link_libraries(opus INTERFACE /usr/lib64/libopus.so)
+ add_subdirectory(opus)
++#add_library(opus INTERFACE)
++#target_include_directories(opus SYSTEM INTERFACE /usr/include/opus)
++#target_link_libraries(opus INTERFACE /usr/lib64/libopus.so)
 diff --git a/src/common/CMakeLists.txt b/src/common/CMakeLists.txt
 index d120c8d3d..533b1a6e4 100644
 --- a/src/common/CMakeLists.txt

@@ -1,0 +1,26 @@
+From 1d378813a379d5e9de6a875959d2cd47d0149c5a Mon Sep 17 00:00:00 2001
+From: Alex Aralis <alex.aralis@gmail.com>
+Date: Fri, 24 Jul 2020 11:01:46 -0500
+Subject: [PATCH] unbundle opus
+
+---
+ externals/CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/externals/CMakeLists.txt b/externals/CMakeLists.txt
+index 6d49a3dd0..6936e89d3 100644
+--- a/externals/CMakeLists.txt
++++ b/externals/CMakeLists.txt
+@@ -93,4 +93,8 @@ if (ENABLE_WEB_SERVICE)
+ endif()
+ 
+ # Opus
+-add_subdirectory(opus)
++add_library(opus INTERFACE)
++target_include_directories(opus SYSTEM INTERFACE /usr/include/opus)
++target_link_libraries(opus INTERFACE /usr/lib64/libopus.so)
++
++
+-- 
+2.27.0
+
