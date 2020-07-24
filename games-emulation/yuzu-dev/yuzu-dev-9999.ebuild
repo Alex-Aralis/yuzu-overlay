@@ -9,7 +9,7 @@ SRC_URI=""
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="system-xbyak system-opus system-qt5 +early-access mainline +gui +desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
+IUSE="system-xbyak system-opus system-qt5 early-access mainline gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
 	!gui? ( !desktop !qt5 )
@@ -22,7 +22,10 @@ RESTRICT="
 "
 
 DEPEND=""
-BDEPEND="early-access? ( dev-vcs/hub )"
+BDEPEND="
+	early-access? ( dev-vcs/hub )
+	mainline? ( dev-vcs/hub )
+"
 RDEPEND="
 	system-qt5? (
 		qt5? ( >=dev-qt/qtwidgets-5.9:5 )
@@ -67,11 +70,14 @@ src_unpack() {
 	git remote add origin $EGIT_REPO_URI
 
 	if use early-access; then
+		[[ -n $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with early-access patches."
 		elog "APPLYING EARLY ACCESS PULL REQUESTS"
 		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "early-access-merge" | cut -d' ' -f1 | tr "\n" ' ')
 	fi
 
 	if use mainline || use early-access; then
+		[[ -n $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with mainline patches."
+		
 		elog "APPLYING MAINLINE PULL REQUESTS"
 		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "mainline-merge" | cut -d' ' -f1 | tr "\n" ' ')
 	fi
