@@ -17,7 +17,7 @@ REQUIRED_USE="
 	^^ ( mainline early-access )
 "
 RESTRICT="
-	!early-access? ( fetch )
+	!early-access? ( !mainline? ( fetch ) )
 	!test? ( test )
 "
 
@@ -77,7 +77,7 @@ src_unpack() {
 
 	if use mainline || use early-access; then
 		[[ -z $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with mainline patches."
-		
+
 		elog "APPLYING MAINLINE PULL REQUESTS"
 		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "mainline-merge" | cut -d' ' -f1 | tr "\n" ' ')
 	fi
@@ -86,7 +86,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/{fix-cmake,static-externals}.patch
+	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
 	if [[ $YUZU_VARIANT == dev ]] && use desktop; then
 		eapply "${FILESDIR}"/dev-metadata.patch
@@ -106,6 +106,10 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DGIT_REV="${PV}"
+		-DBUILD_FULLNAME="${EGIT_BRANCH:-$EGIT_COMMIT}"
+		-DGIT_BRANCH="${PN}"
+		-DGIT_DESC="${PV}"
 		-DCMAKE_INSTALL_PREFIX="${D}/usr"
 		-DUSE_DISCORD_PRESENCE=$(usex discord ON OFF)
 		-DENABLE_CUBEB=$(usex cubeb ON OFF)
