@@ -7,7 +7,7 @@ DESCRIPTION="A Nintendo Switch emulator"
 HOMEPAGE="https://yuzu-emu.org/"
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS=""
+[[ ${PV} == 9999 ]] || KEYWORDS="~amd64 ~x86"
 IUSE="system-xbyak system-opus system-qt5 gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
@@ -57,7 +57,7 @@ else
 fi
 
 src_prepare() {
-	eapply "${FILESDIR}"/{fix-cmake,static-externals}.patch
+	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
 	if use system-xbyak; then
 		eapply "${FILESDIR}"/unbundle-xbyak.patch
@@ -77,6 +77,10 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DGIT_REV="${PV}"
+		-DBUILD_FULLNAME="${EGIT_BRANCH:-$EGIT_COMMIT}"
+		-DGIT_BRANCH="${PN}"
+		-DGIT_DESC="${PV}"
 		-DCMAKE_INSTALL_PREFIX="${D}/usr"
 		-DUSE_DISCORD_PRESENCE=$(usex discord ON OFF)
 		-DENABLE_CUBEB=$(usex cubeb ON OFF)
