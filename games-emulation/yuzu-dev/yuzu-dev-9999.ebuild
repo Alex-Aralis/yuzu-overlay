@@ -70,13 +70,13 @@ src_unpack() {
 	git remote add origin $EGIT_REPO_URI
 
 	if use early-access; then
-		[[ -n $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with early-access patches."
+		[[ -z $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with early-access patches."
 		elog "APPLYING EARLY ACCESS PULL REQUESTS"
 		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "early-access-merge" | cut -d' ' -f1 | tr "\n" ' ')
 	fi
 
 	if use mainline || use early-access; then
-		[[ -n $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with mainline patches."
+		[[ -z $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with mainline patches."
 		
 		elog "APPLYING MAINLINE PULL REQUESTS"
 		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "mainline-merge" | cut -d' ' -f1 | tr "\n" ' ')
