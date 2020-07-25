@@ -8,6 +8,8 @@ Most of the Yuzu flags are not tested because it would take forever and the feat
 
 This yuzu is stable masked (as it is very very unstable). If this statement confuses you read all about it -> https://wiki.gentoo.org/wiki/KEYWORDS
 
+GITHUB_TOKEN must be set in make.conf in order for mainline or early-access use flags to compile with yuzu-dev. The token is needed so that the early-access and mainline PR patch can be pulled down from github via hub. https://github.com/github/hub
+
 ## Bug-like things:
 - httplib AND libressl are still required even when ENABLE_WEB_SERVICE=OFF. I've exposed the webservice use flag but disabling it will cause the compilation to fail.
 Example when webservice off and libressl block left in the libressl conditional (at this point i had already removed httplib from the block). 
@@ -18,8 +20,6 @@ Example when webservice off and libressl block left in the libressl conditional 
 - CMAKE_PREFIX_PATH seems to be ignored by find_package (even when no find.cmake file is provided for the target and explicitly told CONFIG)
 - CMAKE_SYSTEM_PREFIX_PATH should be semicolon delimited but seems have no delimiters.
 - the Findopus.cmake module complains about capitalization mismatch when used.
-- unicorn dir needs to be clean to be build from scratch
-- yuzu-emu/yuzu (ad0b2951250979549082fdef3ba4fd93a720b5df) fails on game load with "Trace/breakpoint trap" but mainline (ad71d9033502d9019b76231528d07bb0845631e0) does not.
 
 ## SECURITY: 
 - because libressl's asm files don't include .note.GNU-stack they are creating writable and executable mem sections. I could fix this with patches but should be fixed upstream. How to fix https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart
@@ -65,9 +65,4 @@ List of offenders:
 - no gentoo cubeb
 - no gentoo discord-rpc
 - no gentoo sirit
-
-(disclaimer, i've got no idea what's going on with cmake and that's probably 80% of my propblems)
-
-## Questions:
-- How do you build docs? Is doxygen required to build without docs?
 
