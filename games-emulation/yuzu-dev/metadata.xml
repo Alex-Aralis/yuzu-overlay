@@ -29,5 +29,7 @@
 		<flag name="sdl2">Use system SDL2. (Required)</flag>
 		<flag name="cubeb">Enable cubeb audio service.</flag>
 		<flag name="discord">Include discord-rpc and allow discord presence detection.</flag>
+		<flag name="compat-list">Include a compatibility list for tested switch games.</flag>
+		<flag name="compat-reporting">Report game compatibility back to Yuzu Dev Team.</flag>
 	</use>
 </pkgmetadata>

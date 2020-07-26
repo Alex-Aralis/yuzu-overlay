@@ -9,7 +9,7 @@ SRC_URI=""
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="system-xbyak system-opus system-qt5 early-access mainline gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
+IUSE="+compat-list compat-reporting system-xbyak system-opus system-qt5 early-access mainline gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice +discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
 	!gui? ( !desktop !qt5 )
@@ -23,8 +23,14 @@ RESTRICT="
 
 DEPEND=""
 BDEPEND="
-	early-access? ( dev-vcs/hub )
-	mainline? ( dev-vcs/hub )
+	early-access? (
+		app-misc/jq
+		net-misc/curl
+	)
+	mainline? (
+		app-misc/jq
+		net-misc/curl
+	)
 "
 RDEPEND="
 	system-qt5? (
@@ -36,6 +42,7 @@ RDEPEND="
 		abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 		abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 	)
+	discord? ( >=dev-libs/rapidjson-1.1.0 )
 	system-opus? ( >=media-libs/opus-1.3.1 )
 	sdl2? ( media-libs/libsdl2 )
 	>=app-arch/lz4-1.8
@@ -67,19 +74,30 @@ src_unpack() {
 	git-r3_src_unpack
 
 	pushd "${S}"
-	git remote add origin $EGIT_REPO_URI
 
 	if use early-access; then
-		[[ -z $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with early-access patches."
-		elog "APPLYING EARLY ACCESS PULL REQUESTS"
-		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "early-access-merge" | cut -d' ' -f1 | tr "\n" ' ')
+		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/(mainline-merge|early-access-merge)/ {print substr($1,2)}' | sort)
+		for patch in $patches; do
+			einfo "Applyig PR #$patch \n"
+			curl -sL https://github.com/yuzu-emu/yuzu/pull/$patch.diff > "${T}/${patch}.patch"
+			eapply "${T}/${patch}.patch"
+		done
 	fi
 
-	if use mainline || use early-access; then
-		[[ -z $GITHUB_TOKEN ]] && eerror "\$GITHUB_TOKEN must be set in make.conf to build with mainline patches."
+	if use mainline; then
+		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/mainline-merge/ {print substr($1,2)}' | sort)
+		for patch in $patches; do
+			einfo "Applyig PR #$patch \n"
+			curl -Ls https://github.com/yuzu-emu/yuzu/pull/$patch.diff > "${T}/${patch}.patch"
+			eapply "${T}/${patch}.patch"
+		done
+	fi
 
-		elog "APPLYING MAINLINE PULL REQUESTS"
-		hub apply --verbose $(hub pr list -L 1000 --format "%U %L%n" | grep "mainline-merge" | cut -d' ' -f1 | tr "\n" ' ')
+	if use compat-list; then
+		local compat_path="${WORKDIR}/${P}_build/dist/compatibility_list"
+
+		mkdir -p "${compat_path}" 
+		curl -Ls https://api.yuzu-emu.org/gamedb/ > "${compat_path}/compatibility_list.json"
 	fi
 
 	popd
@@ -89,15 +107,19 @@ src_prepare() {
 	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
 	if [[ $YUZU_VARIANT == dev ]] && use desktop; then
-		eapply "${FILESDIR}"/dev-metadata.patch
+		eapply "${FILESDIR}/dev-metadata.patch"
 	fi
 
 	if use system-xbyak; then
-		eapply "${FILESDIR}"/unbundle-xbyak.patch
+		eapply "${FILESDIR}/unbundle-xbyak.patch"
 	fi
 
 	if use system-opus; then
-		eapply "${FILESDIR}"/unbundle-opus.patch
+		eapply "${FILESDIR}/unbundle-opus.patch"
+	fi
+
+	if use discord; then
+		eapply "${FILESDIR}/unbundle-rapidjson.patch"
 	fi
 
 	cmake_src_prepare
@@ -122,6 +144,8 @@ src_configure() {
 		-DYUZU_USE_BUNDLED_QT=$(usex !system-qt5 ON OFF)
 		-DYUZU_USE_QT_WEB_ENGINE=$(usex qt-webengine ON OFF)
 		-DENABLE_QT_TRANSLATION=$(usex qt-translations ON OFF)
+		-DENABLE_COMPATIBILITY_LIST_DOWNLOAD=$(usex compat-list ON OFF)
+		-DYUZU_ENABLE_COMPATIBILITY_REPORTING=$(usex compat-reporting ON OFF)
 	)
 
 	cmake_src_configure

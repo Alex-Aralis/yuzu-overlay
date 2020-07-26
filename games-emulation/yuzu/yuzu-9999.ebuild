@@ -8,7 +8,7 @@ HOMEPAGE="https://yuzu-emu.org/"
 LICENSE="GPL-2+"
 SLOT="0"
 [[ ${PV} == 9999 ]] || KEYWORDS="~amd64 ~x86"
-IUSE="system-xbyak system-opus system-qt5 gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
+IUSE="compat-list compat-reporting system-xbyak system-opus system-qt5 gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
 	!gui? ( !desktop !qt5 )
@@ -30,6 +30,7 @@ RDEPEND="
 		abi_x86_64? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 		abi_x86_32? ( !generic? ( >=dev-libs/xbyak-5.91 ) )
 	)
+	discord? ( >=dev-libs/rapidjson-1.1.0 )
 	system-opus? ( >=media-libs/opus-1.3.1 )
 	sdl2? ( media-libs/libsdl2 )
 	>=app-arch/lz4-1.8
@@ -60,15 +61,19 @@ src_prepare() {
 	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
 	if use system-xbyak; then
-		eapply "${FILESDIR}"/unbundle-xbyak.patch
+		eapply "${FILESDIR}/unbundle-xbyak.patch"
 	fi
 
 	if use system-opus; then
-		eapply "${FILESDIR}"/unbundle-opus.patch
+		eapply "${FILESDIR}/unbundle-opus.patch"
+	fi
+
+	if use discord; then
+		eapply "${FILESDIR}/unbundle-rapidjson.patch"
 	fi
 
 	if use desktop; then
-		eapply "${FILESDIR}"/mainline-metadata.patch
+		eapply "${FILESDIR}/mainline-metadata.patch"
 	fi
 
 	cmake_src_prepare
@@ -76,6 +81,20 @@ src_prepare() {
 }
 
 src_configure() {
+	if use compat-list; then
+		local compat_list_dir="${WORKDIR}/${P}_build/dist/compatibility_list"
+		mkdir -p "$compat_list_dir"
+		if [[ -f "${FILESDIR}/compatibility_list-${PV}.json" ]]; then
+			cp "${FILESDIR}/compatibility_list-${PV}.json" "${compat_list_dir}/compatibility_list.json"
+		else
+			cp "${FILESDIR}/compatibility_list.json" "${compat_list_dir}/compatibility_list.json"
+		fi
+	fi
+
+	pwd
+	ls -lR dist
+
+
 	local mycmakeargs=(
 		-DGIT_REV="${PV}"
 		-DBUILD_FULLNAME="${EGIT_BRANCH:-$EGIT_COMMIT}"
@@ -93,6 +112,8 @@ src_configure() {
 		-DYUZU_USE_BUNDLED_QT=$(usex !system-qt5 ON OFF)
 		-DYUZU_USE_QT_WEB_ENGINE=$(usex qt-webengine ON OFF)
 		-DENABLE_QT_TRANSLATION=$(usex qt-translations ON OFF)
+		-DENABLE_COMPATIBILITY_LIST_DOWNLOAD=$(usex compat-list ON OFF)
+		-DYUZU_ENABLE_COMPATIBILITY_REPORTING=$(usex compat-reporting ON OFF)
 	)
 
 	cmake_src_configure
