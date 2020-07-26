@@ -44,7 +44,7 @@ List of offenders:
 !WX --- ---  ./work/yuzu-9999_build/externals/libressl/crypto/CMakeFiles/crypto.dir/sha/sha256-elf-x86_64.S.o
 !WX --- ---  ./work/yuzu-9999_build/externals/libressl/crypto/CMakeFiles/crypto.dir/md5/md5-elf-x86_64.S.o
 
-## Conan dependancies
+## Conan dependencies
 - All conan deps were able to be subbed for system libs.
 - the ebuild does not (and cannot easily) use conan
 - catch-2.11.3 provided in overlay. It is possible that the overlay could be removed if 2.5.0 (2.9.1 testing) is good enough. Have not tested with lower version numbers.
