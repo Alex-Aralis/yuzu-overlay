@@ -77,18 +77,22 @@ src_unpack() {
 	pushd "${S}"
 
 	if use early-access; then
+		mkdir "${T}/patches"
 		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/(mainline-merge|early-access-merge)/ {print substr($1,2)}' | sort)
+
 		for p in $patches; do
 			einfo "Fetching PR #$p \n"
-			curl -sL https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/${p}.patch"
+			curl -sL https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/patches/${p}.patch"
 		done
 	fi
 
 	if use mainline; then
+		mkdir "${T}/patches"
 		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/mainline-merge/ {print substr($1,2)}' | sort)
+
 		for p in $patches; do
 			einfo "Fetching PR #$p \n"
-			curl -Ls https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/${p}.patch"
+			curl -Ls https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/patches/${p}.patch"
 		done
 	fi
 
@@ -124,7 +128,7 @@ src_prepare() {
 	fi
 
 	# Apply all patches stored in tmp
-	eapply "${T}"/*.patch
+	eapply "${T}"/patches/*.patch
 
 	cmake_src_prepare
 	xdg_src_prepare

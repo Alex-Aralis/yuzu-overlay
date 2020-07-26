@@ -1,1 +1,1 @@
-yuzu/yuzu-9999.ebuild
+yuzu-9999.ebuild
