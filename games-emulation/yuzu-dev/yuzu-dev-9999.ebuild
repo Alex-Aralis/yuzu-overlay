@@ -31,6 +31,7 @@ BDEPEND="
 		app-misc/jq
 		net-misc/curl
 	)
+	gnome-base/librsvg
 "
 RDEPEND="
 	system-qt5? (
@@ -77,26 +78,23 @@ src_unpack() {
 
 	if use early-access; then
 		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/(mainline-merge|early-access-merge)/ {print substr($1,2)}' | sort)
-		for patch in $patches; do
-			einfo "Applyig PR #$patch \n"
-			curl -sL https://github.com/yuzu-emu/yuzu/pull/$patch.diff > "${T}/${patch}.patch"
-			eapply "${T}/${patch}.patch"
+		for p in $patches; do
+			einfo "Fetching PR #$p \n"
+			curl -sL https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/${p}.patch"
 		done
 	fi
 
 	if use mainline; then
 		local patches=$(curl -s https://api.github.com/repos/yuzu-emu/yuzu/pulls?per_page=1000 | jq ".[] | [.number, .labels[].name]" -c | awk -F',' '/mainline-merge/ {print substr($1,2)}' | sort)
-		for patch in $patches; do
-			einfo "Applyig PR #$patch \n"
-			curl -Ls https://github.com/yuzu-emu/yuzu/pull/$patch.diff > "${T}/${patch}.patch"
-			eapply "${T}/${patch}.patch"
+		for p in $patches; do
+			einfo "Fetching PR #$p \n"
+			curl -Ls https://github.com/yuzu-emu/yuzu/pull/$p.diff > "${T}/${p}.patch"
 		done
 	fi
 
 	if use compat-list; then
-		local compat_path="${WORKDIR}/${P}_build/dist/compatibility_list"
-
-		mkdir -p "${compat_path}" 
+		local compat_path="${BUILD_DIR}/dist/compatibility_list"
+		mkdir -p "${compat_path}"
 		curl -Ls https://api.yuzu-emu.org/gamedb/ > "${compat_path}/compatibility_list.json"
 	fi
 
@@ -107,7 +105,10 @@ src_prepare() {
 	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
 	if [[ $YUZU_VARIANT == dev ]] && use desktop; then
-		eapply "${FILESDIR}/dev-metadata.patch"
+		eapply "${FILESDIR}"/{dev-metadata,gentoo-icon}.patch
+
+		# Regenerate the yuzu.png from the svg icon after patching with gentoo-icon.patch
+		rsvg-convert -h 256 -w 256 "${S}/dist/yuzu.svg" > "${S}/dist/qt_themes/default/icons/256x256/yuzu.png"
 	fi
 
 	if use system-xbyak; then
@@ -121,6 +122,9 @@ src_prepare() {
 	if use discord; then
 		eapply "${FILESDIR}/unbundle-rapidjson.patch"
 	fi
+
+	# Apply all patches stored in tmp
+	eapply "${T}"/*.patch
 
 	cmake_src_prepare
 	xdg_src_prepare
