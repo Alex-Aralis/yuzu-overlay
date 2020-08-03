@@ -47,12 +47,12 @@ RDEPEND="
 	system-opus? ( >=media-libs/opus-1.3.1 )
 	sdl2? ( media-libs/libsdl2 )
 	>=app-arch/lz4-1.8
-	>=dev-cpp/catch-2.11
-	>=dev-cpp/nlohmann_json-3.7
+	>=dev-cpp/catch-2.13
+	>=dev-cpp/nlohmann_json-3.8
 	>=app-arch/zstd-1.4
 	>=sys-libs/zlib-1.2
 	>=dev-libs/libfmt-7.0
-	>=dev-libs/boost-1.71[context]
+	>=dev-libs/boost-1.73[context]
 	>=dev-libs/libzip-1.5
 	${DEPEND}
 "
