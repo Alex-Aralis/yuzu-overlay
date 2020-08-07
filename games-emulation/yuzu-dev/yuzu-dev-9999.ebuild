@@ -108,6 +108,10 @@ src_unpack() {
 src_prepare() {
 	eapply "${FILESDIR}"/{fix-cmake,static-externals,inject-git-info}.patch
 
+	if use desktop; then
+		eapply "${FILESDIR}/mime-type.patch"
+	fi
+
 	if [[ $YUZU_VARIANT == dev ]] && use desktop; then
 		eapply "${FILESDIR}"/{dev-metadata,gentoo-icon}.patch
 
@@ -131,10 +135,14 @@ src_prepare() {
 		eapply "${FILESDIR}/fix-vulkan.patch"
 	fi
 
-	rm "${T}"/patches/{4352,4397}.patch || true
+	if use early-access; then
+		rm "${T}"/patches/{4352,4397}.patch || true
+	fi
 
-	# Apply all patches stored in tmp
-	eapply "${T}"/patches/*.patch
+	if use early-access || use mainline; then
+		# Apply all patches stored in tmp
+		eapply "${T}"/patches/*.patch
+	fi
 
 	cmake_src_prepare
 	xdg_src_prepare

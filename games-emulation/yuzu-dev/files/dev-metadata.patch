@@ -1,5 +1,5 @@
 diff --git a/dist/yuzu.desktop b/dist/yuzu.desktop
-index 105080c73..6ece81cb5 100644
+index 8f09d1bd3..ffd730f50 100644
 --- a/dist/yuzu.desktop
 +++ b/dist/yuzu.desktop
 @@ -1,12 +1,12 @@
@@ -17,11 +17,11 @@ index 105080c73..6ece81cb5 100644
 +TryExec=yuzu-dev
 +Exec=yuzu-dev %f
  Categories=Game;Emulator;Qt;
- MimeType=application/x-nx-nro;application/x-nx-nso;
+ MimeType=application/x-nx-nro;application/x-nx-nso;application/x-nx-nsp;application/x-nx-xci
  Keywords=Switch;Nintendo;
 \ No newline at end of file
 diff --git a/dist/yuzu.xml b/dist/yuzu.xml
-index f6e408321..792f4450d 100644
+index dd1e30a6b..785ca2e19 100644
 --- a/dist/yuzu.xml
 +++ b/dist/yuzu.xml
 @@ -3,7 +3,7 @@
@@ -42,3 +42,22 @@ index f6e408321..792f4450d 100644
          <glob pattern="*.nso"/>
          <magic><match value="NSO" type="string" offset="0"/></magic>
      </mime-type>
+@@ -19,7 +19,7 @@
+     <mime-type type="application/x-nx-nsp">
+         <comment>Nintendo Switch Package</comment>
+         <acronym>NSP</acronym>
+-        <icon name="yuzu"/>
++        <icon name="yuzu-dev"/>
+         <glob pattern="*.nsp"/>
+         <magic><match value="PFS" type="string" offset="0"/></magic>
+     </mime-type>
+@@ -27,7 +27,7 @@
+     <mime-type type="application/x-nx-xci">
+         <comment>Nintendo Switch Card Image</comment>
+         <acronym>XCI</acronym>
+-        <icon name="yuzu"/>
++        <icon name="yuzu-dev"/>
+         <glob pattern="*.xci"/>
+     </mime-type>
+ </mime-info>
+\ No newline at end of file
