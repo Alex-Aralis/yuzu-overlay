@@ -9,7 +9,7 @@ SRC_URI=""
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+compat-list compat-reporting system-xbyak system-opus system-qt5 early-access mainline gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice +discord +cubeb vulkan"
+IUSE="+compat-list compat-reporting +system-xbyak +system-opus +system-qt5 early-access mainline gui desktop cli test qt-translations generic abi_x86_32 abi_x86_64 +sdl2 qt-webengine qt5 +boxcat +webservice +discord +cubeb vulkan"
 REQUIRED_USE="
 	!qt5? ( !qt-webengine  !qt-translations !system-qt5 )
 	!gui? ( !desktop !qt5 )
@@ -126,6 +126,12 @@ src_prepare() {
 	if use discord; then
 		eapply "${FILESDIR}/unbundle-rapidjson.patch"
 	fi
+
+	if use vulkan; then
+		eapply "${FILESDIR}/fix-vulkan.patch"
+	fi
+
+	rm "${T}"/patches/{4352,4397}.patch || true
 
 	# Apply all patches stored in tmp
 	eapply "${T}"/patches/*.patch
