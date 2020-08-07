@@ -73,7 +73,7 @@ src_prepare() {
 	fi
 
 	if use desktop; then
-		eapply "${FILESDIR}/mainline-metadata.patch"
+		eapply "${FILESDIR}"/{mime-type,mainline-metadata}.patch
 	fi
 
 	cmake_src_prepare
