@@ -135,10 +135,6 @@ src_prepare() {
 		eapply "${FILESDIR}/fix-vulkan.patch"
 	fi
 
-	if use early-access; then
-		rm "${T}"/patches/{4352,4397}.patch || true
-	fi
-
 	if use early-access || use mainline; then
 		# Apply all patches stored in tmp
 		eapply "${T}"/patches/*.patch

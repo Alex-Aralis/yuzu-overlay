@@ -7,7 +7,7 @@ index c614a4c08..8f09d1bd3 100644
  Exec=yuzu %f
  Categories=Game;Emulator;Qt;
 -MimeType=application/x-nx-nro;application/x-nx-nso;
-+MimeType=application/x-nx-nro;application/x-nx-nso;application/x-nx-nsp;application/x-nx-xci
++MimeType=application/x-nx-nro;application/x-nx-nso;application/x-nx-nsp;application/x-nx-xci;
  Keywords=Switch;Nintendo;
 \ No newline at end of file
 diff --git a/dist/yuzu.xml b/dist/yuzu.xml
