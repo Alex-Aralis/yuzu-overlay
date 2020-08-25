@@ -52,7 +52,7 @@ RDEPEND="
 	>=app-arch/zstd-1.4
 	>=sys-libs/zlib-1.2
 	>=dev-libs/libfmt-7.0
-	>=dev-libs/boost-1.73[context]
+	>=dev-libs/boost-1.73:=[context]
 	>=dev-libs/libzip-1.5
 	${DEPEND}
 "
